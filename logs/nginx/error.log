@@ -1,0 +1,5 @@
+2024/03/23 23:52:43 [alert] 11384#17796: OpenEvent("ngx_master_8436") failed (2: The system cannot find the file specified)
+2024/03/24 15:29:48 [alert] 9628#10344: OpenEvent("ngx_master_10140") failed (2: The system cannot find the file specified)
+2024/04/03 17:44:31 [alert] 22520#10144: OpenEvent("ngx_master_5764") failed (2: The system cannot find the file specified)
+2024/04/03 17:47:41 [alert] 23320#25404: OpenEvent("ngx_master_15188") failed (2: The system cannot find the file specified)
+2024/08/05 16:35:18 [error] 20700#4736: *11753 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while reading response header from upstream, client: 127.0.0.1, server: , request: "GET /favicon.ico HTTP/1.0", upstream: "fastcgi://127.0.0.1:10009", host: "fictional-university.local", referrer: "http://fictional-university.local/programs/biology/"
