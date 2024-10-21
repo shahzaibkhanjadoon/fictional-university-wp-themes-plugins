@@ -24,6 +24,13 @@ page_banner(array(
        ?>
        </ul>
        <hr class="section-break">
+
+       <?php 
+   
+
+    
+     wp_reset_postdata();
+       ?>
     </div>
 <?php
 get_footer();

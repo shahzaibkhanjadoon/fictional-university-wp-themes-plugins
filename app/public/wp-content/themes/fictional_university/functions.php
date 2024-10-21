@@ -1,4 +1,16 @@
 <?php
+
+// custom rest route for search
+require get_theme_file_path('/inc/search-route.php');
+// function to customize rest API 
+function university_costom_rest(){
+  register_rest_field('post','authorName',array(
+'get_callback'=>function(){
+   return get_the_author();
+}
+  ));
+}
+add_action('rest_api_init','university_costom_rest');
 //page banner function
 function page_banner($args=Null)
 {
@@ -40,6 +52,11 @@ function University_style_files()
   wp_enqueue_style('font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
     wp_enqueue_style('main_style_file', get_theme_file_uri('/build/style-index.css'));
     wp_enqueue_style('extra_style_file',get_theme_file_uri('/build/index.css'));
+
+    // output js data in source file : three parameters 1: where you want to use this data , 2: name 3:array for data.
+    wp_localize_script('main_js_file','universitydata',array(
+      'root_url'=>get_site_url(),
+    ));
 }
 
 add_action('wp_enqueue_scripts','University_style_files');

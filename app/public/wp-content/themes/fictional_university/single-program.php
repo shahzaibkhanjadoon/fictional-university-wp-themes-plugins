@@ -58,6 +58,30 @@ while(have_posts())
         // wp_reset_query();
         wp_reset_postdata();
 
+        //showing related campuses
+        $Related_Campuses = get_field('related_campuses');
+
+        if($Related_Campuses)
+        {
+          echo '<hr>';
+          echo '<h4>Related Campuses</h4>'; 
+          echo '<ul>';
+          foreach($Related_Campuses as $campus)
+          {
+            ?>
+            <a href="<?php the_permalink($campus) ?>">
+            <li>
+            <?php
+            echo get_the_title($campus);
+           ?>
+           </a>
+          </li>
+           <?php 
+          }
+          echo '</ul>';
+        }
+       
+
          $upcoming_events = new WP_Query(array(
             'posts_per_page'=> -1,
             'post_type'=>'event',
@@ -83,6 +107,7 @@ while(have_posts())
     
          if($upcoming_events->have_posts())
          {
+          echo '<hr>';
           echo '<h4> Related Events </h4>';
           while($upcoming_events->have_posts()){
             $upcoming_events->the_post();

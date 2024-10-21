@@ -20,7 +20,42 @@ while(have_posts())
     <p><?php the_content(); ?><p>
         <hr>
 </div>
+<?php
+$Related_programs = new WP_Query(array(
+        'posts_per_page'=> -1,
+        'post_type'=>'program',
+        'orderby'=>'title',
+        'order'=>'Asc',
+         'meta_query'=>array(
+            array(
+                'key'=>'related_campuses',
+                'compare'=>'LIKE',
+                'value'=> '"'.get_the_ID().'"',
+               ),
+           ),
+         
+     ));
+// print_r($Related_programs);
 
+// while($Related_programs->have_posts())
+// {
+     if($Related_programs->have_posts())
+     {
+      echo '<h4> Related Programs </h4>';
+      echo '<ul>';
+       while($Related_programs->have_posts())
+ {
+        $Related_programs->the_post();
+        ?><a href="<?php the_permalink(); ?>"><?php
+      echo '<li>';
+     echo get_the_title(); 
+      echo '</li>';
+      ?></a><?php
+     }
+      }   
+      echo '</ul>';
+//  }
+ ?>
 
 <?php
 }

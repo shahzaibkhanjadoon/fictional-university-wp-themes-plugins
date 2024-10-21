@@ -12,15 +12,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _css_style_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../css/style.scss */ "./css/style.scss");
 /* harmony import */ var _modules_MobileMenu__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/MobileMenu */ "./src/modules/MobileMenu.js");
 /* harmony import */ var _modules_HeroSlider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/HeroSlider */ "./src/modules/HeroSlider.js");
+/* harmony import */ var _modules_search__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/search */ "./src/modules/search.js");
 
 
 // Our modules / classes
 
 
 
+
 // Instantiate a new object using our modules/classes
 var mobileMenu = new _modules_MobileMenu__WEBPACK_IMPORTED_MODULE_1__["default"]();
 var heroSlider = new _modules_HeroSlider__WEBPACK_IMPORTED_MODULE_2__["default"]();
+var livesearch = new _modules_search__WEBPACK_IMPORTED_MODULE_3__["default"]();
 
 /***/ }),
 
@@ -94,6 +97,106 @@ class MobileMenu {
 
 /***/ }),
 
+/***/ "./src/modules/search.js":
+/*!*******************************!*\
+  !*** ./src/modules/search.js ***!
+  \*******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "jquery");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+
+// class starts here 
+class search {
+  // 1: initiat object 
+  constructor() {
+    this.openbutton = jquery__WEBPACK_IMPORTED_MODULE_0___default()(".js-search-trigger");
+    this.closebutton = jquery__WEBPACK_IMPORTED_MODULE_0___default()(".search-overlay__close");
+    this.overlay = jquery__WEBPACK_IMPORTED_MODULE_0___default()(".search-overlay");
+    this.searchfield = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#search-term");
+    this.searchresult = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#search_content");
+    this.events();
+    this.isoverlayopen = false;
+    this.previousvalue;
+    this.isloadervisible = false;
+    this.searchtimer;
+  }
+
+  // 2: Events 
+  events() {
+    this.openbutton.on("click", this.openoverlay.bind(this));
+    this.closebutton.on("click", this.closeoverlay.bind(this));
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on("keydown", this.keypressevent.bind(this));
+    this.searchfield.on("keyup", this.searchlogic.bind(this));
+  }
+
+  // 3: methods/ funcitons / actions 
+
+  openoverlay() {
+    this.overlay.addClass("search-overlay--active");
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()("body").addClass("body-no-scroll");
+    this.searchfield.val('');
+    setTimeout(() => this.searchfield.focus(), 301);
+    this.isoverlayopen = true;
+  }
+  closeoverlay() {
+    this.overlay.removeClass("search-overlay--active");
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()("body").removeClass("body-no-scroll");
+    this.isoverlayopen = false;
+  }
+  keypressevent(e) {
+    if (e.keyCode == 83 && this.isoverlayopen == false && !jquery__WEBPACK_IMPORTED_MODULE_0___default()("input , textarea").is(':focus')) {
+      this.openoverlay();
+    }
+    if (e.keyCode == 27 && this.isoverlayopen == true) {
+      this.closeoverlay();
+    }
+  }
+  // keypressevent ftn end 
+  // searchlogic ftn start 
+  searchlogic() {
+    if (this.previousvalue != this.searchfield.val()) {
+      clearTimeout(this.searchtimer);
+      if (this.searchfield.val()) {
+        if (this.isloadervisible == false) {
+          this.searchresult.html('<div class="spinner-loader"></div>');
+          this.isloadervisible = true;
+        }
+        this.searchtimer = setTimeout(this.searchedcontent.bind(this), 750);
+      } else {
+        this.searchresult.html('');
+      }
+    }
+    this.previousvalue = this.searchfield.val();
+  }
+
+  // this is responsible for content in searcharea
+  searchedcontent() {
+    jquery__WEBPACK_IMPORTED_MODULE_0___default().when(jquery__WEBPACK_IMPORTED_MODULE_0___default().getJSON(universitydata.root_url + '/wp-json/wp/v2/posts?search=' + this.searchfield.val()), jquery__WEBPACK_IMPORTED_MODULE_0___default().getJSON(universitydata.root_url + '/wp-json/wp/v2/pages?search=' + this.searchfield.val())).then((postdata, pagedata) => {
+      var combineresults = postdata[0].concat(pagedata[0]);
+      this.searchresult.html(`
+        <h2 class="search-overlay__section-title">General Information</h2>
+        ${combineresults.length ? `<ul class="link-list min-list">` : `<p>Nothing Found for your search</p>`}
+        ${combineresults.map(item => `<li><a href="${item.link}">${item.title.rendered} </a> &nbsp; ${item.type == 'post' ? `by ${item.authorName}` : ''}</li>`).join('')}
+        ${combineresults.length ? `</ul>` : ``}
+        `);
+      this.isloadervisible = false;
+    }, () => {
+      this.searchresult.html('<p>Unexpected error; Please try again later.</p>');
+    });
+  }
+  // searchedcontent ftn end 
+}
+// class ends here 
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (search);
+
+/***/ }),
+
 /***/ "./css/style.scss":
 /*!************************!*\
   !*** ./css/style.scss ***!
@@ -103,6 +206,16 @@ class MobileMenu {
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ }),
+
+/***/ "jquery":
+/*!*************************!*\
+  !*** external "jQuery" ***!
+  \*************************/
+/***/ ((module) => {
+
+module.exports = window["jQuery"];
 
 /***/ }),
 
@@ -4073,6 +4186,18 @@ var Glide = /*#__PURE__*/function (_Core) {
 /******/ 				}
 /******/ 			}
 /******/ 			return result;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
 /******/ 		};
 /******/ 	})();
 /******/ 	
